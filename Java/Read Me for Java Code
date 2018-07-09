@@ -1,0 +1,5 @@
+This text is meant to understand what the Java code does.
+
+What this code does is a mini program with a person's bank account. That the person can withdraw or deposit money from their balance.
+The program is going to assume the balance is already to make the prgram function. Also the program is going to assume that the person would
+choose 1-4 for their options. 
