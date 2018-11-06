@@ -1,0 +1,30 @@
+/*
+Description: Converting a temperature that the user inputs to either
+Celsius or Fehrenheit
+Input: The input would be the temperature to be converated.
+Output: The output would be the temperature coverated to either
+fahrenheit or celsius.
+*/
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    double temp; //Temperature inputted
+    double fahren; //Fahrenheit
+    double cels; //Celsius
+
+    cout << "David Navarro, Lec 1003, Lab 1011, Assigment #2" << endl;
+    cout << "Please enter a temperature to convert: ";
+    cin >> temp;
+
+    fahren = (1.8 * temp) + 32; //Temperature converstion
+    cels = (temp - 32) / 1.8;
+
+    cout << temp << " Fahrenheit = " << cels << " Celsius" << endl;
+    cout << temp << " Celsius = " << fahren << " Fehrenheit" << endl;
+    
+    return 0;
+}
