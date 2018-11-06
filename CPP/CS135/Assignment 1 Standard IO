@@ -1,0 +1,44 @@
+
+Description: This is a program that would take inputs from the user
+via information, and make a buiness card from that
+information
+Input: Input in the program would be name, title, department, and email
+ in the business card.
+Ouput: Output would be the buiness card that has the user's information
+ in a neated design buiness card
+*/
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+    string name, title, department, email;
+    cout << "Enter your name: ";
+    cin >> name;
+    
+    cout << "Enter your title (Lecturer/Student): ";
+    cin >> title;
+    cout << "Enter your department/major: ";
+    cin >> department;
+    cout << "Enter your email account: ";
+    cin >> email;
+    cout << endl;
+
+    cout << "Here is your official UNLV business card: " << endl;
+    cout << endl;
+    cout << "+" << setfill('-') << setw(34) << "+" << endl;
+    cout << "|" << setfill(' ') << setw(34) << "|" << endl;
+    cout << "|" << name << setw(34 - name.length()) << "|" << endl;
+    cout << "|" << title << setw(34 - title.length()) << "|" << endl;
+    cout << "|" << "Department of " << department << setw(20 -
+    department.length()) << "|" << endl;
+    cout << "|" << "University of Nevada, Las Vegas" << " |" << endl;
+    cout << "|" << email << setw(34 - email.length()) << "|" << endl;
+    cout << "|" << setw(34) << "|" << endl;
+    cout << "+" << setfill('-') << setw(34) << "+" << endl;
+
+    return 0;
+}
