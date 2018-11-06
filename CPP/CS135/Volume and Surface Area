@@ -1,0 +1,58 @@
+/* 
+What this program does is that the user would decide
+to choose cone or a pyramid, then input the
+dimensions of either the cone or pymramid.
+input: Choose either C or P, then the dimensions.
+Ouput: The calcuated results of either the cone
+or pyramid.
+*/
+
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+int main()
+{
+    cout << "Please enter a desired shape" << endl;
+    cout << "C or c for cone" << endl;
+    cout << "P or p for pyramid" << endl;
+    char shape;
+    cin >> shape;
+
+    if(shape == 'C' || shape == 'c')
+    {
+      cout << "Please enter the raduis then the height of the cone" << endl;
+      double raduis, height, volume, area;
+      cin >> raduis >> height;
+
+      volume = (M_PI * pow(raduis, 2)) * (height / 3);
+      area = (M_PI * raduis) * (raduis + sqrt(pow(height, 2) +
+      pow(raduis, 2)));
+
+      cout << fixed << setprecision(5);
+      cout << "Raduis:" << right << setw(20) << raduis << endl;
+      cout << "Height:" << right << setw(20) << height << endl;
+      cout << "Volume:" << right << setw(20) << volume << endl;
+      cout << "Surface Area" << right << setw(15) << area << endl;
+    }
+    else if(shape == 'P' || shape == 'p')
+    {
+      cout << "Please enter the length, width, and height of the pyramid" << endl;
+      double length, width, height, volume;
+      cin >> length >> width >> height;
+
+      volume = (length * width * height) / 3;
+      cout << fixed << setprecision(5);
+      cout << "Length:" << right << setw(20) << length << endl;
+      cout << "Width:" << right << setw(21) << width << endl;
+      cout << "Height:" << right << setw(20) << height << endl;
+      cout << "Volume:" << right << setw(20) << volume << endl;
+    }
+    else
+      cout << shape << " is not a valid choice. Please enter C or P" << endl;
+
+return 0;
+
+}
