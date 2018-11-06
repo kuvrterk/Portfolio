@@ -1,0 +1,102 @@
+/*
+The user inputs a number a temperature, then choose the temperature unit.
+After that whatever the number was it would be converted to 5 other
+temperature units from the user's choosen unit.
+Input: Should be the temperature's number plus the unit afterwards
+Output: Would be the converted temperature to 5 other units, from the user
+choosen unit.
+*/
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+int main()
+{
+    int Temp, Cels, Dels, Fahren, Kel, New, Rank;
+    char unit;
+    cout << "Please enter a Temperature: ";
+    cin >> Temp;
+
+    cout << "Enter the unit:" << endl;
+    cout << "" << setfill('-') << setw(15) << "" << endl;
+    cout << "C / c - Celsius" << endl;
+    cout << "D / d - Delisle" << endl;
+    cout << "F / f - Fahrenheit" << endl;
+    cout << "K / k - Kelvin" << endl;
+    cout << "N / n - Newton" << endl; 
+    cout << "R / r - Rankine" << endl;
+    cout << "" << setw(15) << "" << endl;
+    cout << "The unit choice is: ";
+    cin >> unit;
+    cout << endl;
+
+    switch(unit) //Different cases on the user's unit
+    {
+      case 'C' : case 'c' :
+      Cels = Temp;
+      Dels = (100 - Temp) * 1.5;
+      Fahren = (Temp * 1.8) + 32;
+      Kel = Temp + 273.15;
+      New = Temp * 0.33;
+      Rank = (Temp + 273.15) * 1.8;
+      break;
+    
+      case 'D' : case 'd' :
+      Cels = 100 - (Temp * 2) / 3;
+      Dels = Temp;
+      Fahren = 212 - (Temp * 1.2);
+      Kel = 373.15 - (Temp * 2) / 3;
+      New = 33 - (Temp * 0.22);
+      Rank = 671.67 - (Temp * 6) / 5;
+      break;
+
+      case 'F' : case 'f' :
+      Cels = ((Temp - 32) * 5) / 9;
+      Dels = ((212 - Temp) * 5) / 6;
+      Fahren = Temp;
+      Kel = ((Temp + 459.67) * 5) / 9;
+      New = ((Temp - 32) * 11) / 60;
+      Rank = Temp + 459.67;
+      break;
+
+      case 'K' : case 'k' :
+      Cels = Temp - 273.15;
+      Dels = ((373.15 - Temp) * 3) / 2;
+      Fahren = (Temp * 9) / 5 - 459.67;
+      Kel = Temp;
+      New = ((Temp - 273.15) * 33) / 100;
+      Rank = (Temp * 9) / 5;
+      break;
+      
+      case 'N' : case 'n' :
+      Cels = (Temp * 100) / 33;
+      Dels = ((33 - Temp) * 50) / 11;
+      Fahren = ((Temp * 60) / 11) + 32;
+      Kel = ((Temp * 100) / 33) + 273.15;
+      New = Temp;
+      Rank = ((Temp * 60) / 11) + 491.67;
+      break;
+  
+      case 'R' : case 'r' :
+      Cels = ((Temp - 491.67) * 5) / 9;
+      Dels = ((671.67 - Temp) * 5) / 6;
+      Fahren = Temp - 459.67;
+      Kel = Temp * 5 / 9;
+      New = ((Temp - 491.67) * 11) / 60;
+      Rank = Temp;
+      break;
+
+      default: cout << "Invalied unit: " << unit << endl;
+    }
+  cout << Temp << unit << " is:" << endl;
+  cout << Cels << "C" << endl;
+  cout << Dels << "D" << endl;
+  cout << Fahren << "F" << endl;
+  cout << Kel << "K" << endl;
+  cout << New << "N" << endl;
+  cout << Rank << "R" << endl;
+
+return 0;
+}
