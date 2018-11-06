@@ -1,0 +1,37 @@
+/
+Desc: Having a line argument take in a ./a.out and a number. That number
+would
+be the amount of times that it would go into fibonaccit's sequence
+Input: A postive number from the command and ./a.out
+Output: If the command line is not exectly two nor the number is positive,
+then it would output an error. If it's two arugments plus a positive number,
+then the amount of times for that sequence.
+*/
+
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+    if(argc != 2 || atoi(argv[1]) < 0)
+    {
+      cout << "Please enter a non-negative number!!!!" << endl;
+      return 1;
+    }
+
+    int fibon_num = 0, fibon_first = 0, fibon_second = 1;
+
+    for(int i = 0; i < atoi(argv[1]); i++)
+    {
+      cout << fibon_num << " ";
+      fibon_num = fibon_first + fibon_second;
+      fibon_first = fibon_second;
+      fibon_second = fibon_num;
+      fibon_num = fibon_first;
+    }
+
+    cout << endl;
+    return 0;
+}
