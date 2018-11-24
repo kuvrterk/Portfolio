@@ -14,12 +14,12 @@ const int BUBBLESORT = 2;
 /*void swap: swapping numbers
 paremeters: Two integers
 doesn't return a value*/
-void swap(int temp_i, int temp_j)
+void swap(int *temp_i, int *temp_j)
 {
         int temp;       
-        temp = temp_j;
-        temp_j = temp_i;
-        temp_i = temp;
+        temp = *temp_j;
+        *temp_j = *temp_i;
+        *temp_i = temp;
 }
 
 /*Void selectionsort: The selection sort algorithm
@@ -35,23 +35,37 @@ void selectionsort(int a[ ], int n, long int& numloops, long int& numswaps)
                         if(a[j] < a[smallest])
                         {
                                 smallest = j;
-                                swap(i, smallest);
+                                swap(a[i], a[smallest]);
                                 numswaps++;
-                        }
                         numloops++;
                 }
                 numloops++;
         }
 }
-
+                       
 /*void bubblesort: The bubble sort algorithm
-Parameters: The array, the size of the array, and two integerswap(j, smallest); //Calling the swap function 
+Parameters: The array, the size of the array, and two integers
+Return value: None*/
+void bubblesort(int a[ ], int n, long int& numloops, long int& numswaps)
+{               
+        numloops = 0;
+        numswaps = 0;
+
+        for(int i = 0; i < n - 1; i++)
+        {
+                for(int j = 0; j < n - i - 1; j++)
+                {
+                        int smallest = j + 1;
+                        if(a[j] > a[smallest])
+                        {
+                                numswaps++;
+                                swap(a[j], a[smallest]); //Calling the swap function 
                         }
                         numloops++;
                 }
                 numloops++;
         }       
-}
+}                    
 
 /*int timesort: Chooses between selection or bubble, calls the function, and the average 
 time took.
@@ -85,7 +99,7 @@ Parameters: Array and array size.
 Return value: None*/
 void initArray(int a[ ], int n)
 {
-srand(RAND_SEED);               
+        srand(RAND_SEED);               
         for(int i = 0; i < n; i++)
                 a[i] = rand() % n + 1;
 }
