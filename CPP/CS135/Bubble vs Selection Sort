@@ -1,0 +1,184 @@
+#include <cstdlib>  // atoi, exit, rand, srand
+#include <ctime>  // clock, CLOCKS_PER_SEC   
+#include <iomanip>  // setprecision
+#include <iostream> // cout, fixed
+
+using namespace std;
+
+const int MAX = 1000000;
+const int RAND_SEED = 135;
+const int MIRCOSECONDS = 10000000;
+const int SELECTIONSORT = 1;
+const int BUBBLESORT = 2;
+
+/*void swap: swapping numbers
+paremeters: Two integers
+doesn't return a value*/
+void swap(int temp_i, int temp_j)
+{
+        int temp;       
+        temp = temp_j;
+        temp_j = temp_i;
+        temp_i = temp;
+}
+
+/*Void selectionsort: The selection sort algorithm
+Parameters: The array, the size of the arry, and two intergers
+Return value: None*/
+void selectionsort(int a[ ], int n, long int& numloops, long int& numswaps)
+{
+        for(int i = 0; i < n - 2; i++)
+        {
+          int smallest = i;
+                for(int j = i + 1; j < n - 1; j++)
+                {
+                        if(a[j] < a[smallest])
+                        {
+                                smallest = j;
+                                swap(i, smallest);
+                                numswaps++;
+                        }
+                        numloops++;
+                }
+                numloops++;
+        }
+}
+
+/*void bubblesort: The bubble sort algorithm
+Parameters: The array, the size of the array, and two integerswap(j, smallest); //Calling the swap function 
+                        }
+                        numloops++;
+                }
+                numloops++;
+        }       
+}
+
+/*int timesort: Chooses between selection or bubble, calls the function, and the average 
+time took.
+Parameters: A number for the sort, array, array size, and two integers
+Return value: Time for the average time for the sort to be excuted*/
+int timesort(int sort_type, int a[], int n, long int& numloops, long int& numswaps)
+{
+        clock_t t1, t2;
+        float mircosecs;
+
+        if(sort_type == 1)
+        {
+                t1 = clock();
+                selectionsort(a, n, numloops, numswaps); //Calling the selection function
+                t2 = clock();
+                mircosecs = float(t2 - t1) /  CLOCKS_PER_SEC * MIRCOSECONDS;            
+
+        }
+        else
+        {
+                t1 = clock();
+                bubblesort(a, n, numloops, numswaps);   //Calling the Bubble Sort Function
+                t2 = clock();
+                mircosecs = float(t2 - t1) / CLOCKS_PER_SEC * MIRCOSECONDS;
+        }
+        return mircosecs;
+}
+
+/* void intArray: Getting random numbers into the array.
+Parameters: Array and array size.
+Return value: None*/
+void initArray(int a[ ], int n)
+{
+srand(RAND_SEED);               
+        for(int i = 0; i < n; i++)
+                a[i] = rand() % n + 1;
+}
+
+/* int max: Finding the max time between bubble and selection.
+Parameters: Bubble and selection's time.
+Return: Max time*/
+int max(int ss_msec, int bb_msec)
+{
+        int max_msec;
+        
+        if(bb_msec > ss_msec)
+                max_msec = bb_msec;
+        else
+                max_msec = ss_msec;
+
+        return max_msec;
+}
+
+/*void printResults: Printing the results of the sort's loops. swaps, and time/
+Parameters: Sort type, # of loops, # of swaps, and time.
+Return value: None*/
+void printResults(int sort, long int numloops, long int numswaps, int msec)
+{
+        if(sort == 1)
+        {
+                cout << "Selection Sort: " << endl;
+                cout << right << setw(11) << "Loops: " << numloops << endl;
+                cout << right << setw(11) << "Swaps: " << numswaps << endl;
+                cout << right << setw(10) << "msec: " << msec << endl;  
+        }
+        else
+        {
+                cout << "Bubble sort:" << endl;
+                cout << right << setw(11) << "Loops: " << numloops << endl;
+                cout << right << setw(11) << "Swaps: " << numswaps << endl;
+                cout << right << setw(10) << "msec: " << msec << endl;
+        }
+}
+
+/*int percentRatio: Getting the percentage of the max and min difference.
+Parameters Bubble and Selection sort's time took.
+Return Value: percentage of the two times.*/
+int percentRatio(int msec_a, int msec_b)
+{
+        double percent_msec;
+
+        percent_msec = (msec_a - msec_b) / msec_b * 100;
+        
+        return percent_msec;
+}
+                
+int main(int argc, char *argv[])
+{
+        int n, a[MAX], ss_msec, bb_msec, max_msec;
+        long int numloops, numswaps;
+
+        if(argc != 2)
+        { 
+                cout << "Must provide the number of ints to generate" << endl;
+                exit(1);
+        }
+
+        n = atoi(argv[1]);
+
+        if (n > MAX)
+        {
+                cout << "Procide a number smaller than " << MAX << endl;
+                exit(1);
+        }
+
+        cout << fixed << setprecision(1);
+
+        initArray(a, n);
+        ss_msec = timesort(SELECTIONSORT, a, n, numloops, numswaps);
+        printResults(SELECTIONSORT, numloops, numswaps, ss_msec);
+
+        initArray(a, n);
+        bb_msec = timesort(BUBBLESORT, a, n, numloops, numswaps);
+        printResults(BUBBLESORT, numloops, numswaps, bb_msec); 
+
+        max_msec= max(ss_msec, bb_msec);
+
+        if(max_msec == bb_msec)
+        {
+                cout << "Bubble sort was " << percentRatio(bb_msec, ss_msec)
+                     << "% slower than bubble sort" << endl;
+        }
+        else
+        {
+                cout << "Selection sort was " << percentRatio(ss_msec, bb_msec)
+                cout << "Must provide the number of ints to generate" << endl;
+        }
+
+        return 0;
+}
