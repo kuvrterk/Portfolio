@@ -1,0 +1,321 @@
+/* 
+Descrption: Getting information about grade and assigns for the final grade
+and the grades of the exam/assigns
+Input: 5 files
+Output: the grades of the files
+*/
+
+#include <cmath>	//round
+#include <cstdlib>	//atoi, exit
+#include <fstream>	//ifstream, ofstream
+#include <iomanip>	//setprecision
+#include <iostream>	//cout, fixed
+
+using namespace std;
+
+const int MAX_STUDENTS = 40;
+const int MAX_ASSIGNMENTS = 20;
+const int MAX_EXAMS = 3;
+const float ASSIGNMENTS_WEIGHT = .3;
+const float DMINUS = 60.0;
+const float D = 63.0;
+const float DPLUS = 67.0;
+const float CMINUS = 70.0;
+const float C = 73.0;
+const float CPLUS = 77.0;
+const float BMINUS = 80.0;
+const float B = 83.0;
+const float BPLUS = 87.0;
+const float AMINUS = 90.0;
+const float A = 93.0;
+
+struct Assignment
+{
+	int id;
+	int points_available;
+	int points_scored;
+	static int number_of_assignments;
+	static int total_assignment_points;
+	static float total_weight_of_assignments;
+};
+	int Assignment::number_of_assignments = 0;
+	int Assignment::total_assignment_points = 0;
+	float Assignment::total_weight_of_assignments = MAX_ASSIGNMENTS;
+
+struct Exam
+{
+	int id;
+	int points_available;
+	int points_scored;
+	float percentage;
+	float weight;
+	static int number_of_exams;
+};
+	int Exam::number_of_exams = 0;
+
+struct Student
+{
+	int id;
+	string name;
+	Assignment assignments[MAX_ASSIGNMENTS];
+	float assignment_percentage;
+	Exam  exams[MAX_EXAMS];
+	float grade_percentage;
+	string letter_grade;
+	static int students;
+};
+	int Student::students = 0;
+
+//Reading the data from the three files into the student array
+void readSetupData(string sfile, string efile, string afile, Student students[ ])
+{
+	ifstream infile1, infile2, infile3;
+	int temp_number;	
+
+	infile1.open(sfile.c_str());
+	infile2.open(efile.c_str());
+	infile3.open(afile.c_str());
+	
+	//Setting all Struct's varaibles to zero
+	for(int i = 0; i < MAX_STUDENTS; i++)
+	{
+		for(int j = 0; j < MAX_ASSIGNMENTS; j++)
+			students[i].assignments[j].points_scored = 0;
+		
+		for(int k = 0; k < MAX_EXAMS; k++)
+			students[i].exams[k].points_scored = 0;
+	}
+			
+	//Getting the info from student info into the student struct
+	while(infile1 >> temp_number)
+	{
+		students[Student::students].id = temp_number;	
+		infile1 >> students[Student::students].name;
+		Student::students++;
+	}
+	infile1.close();
+	//Getting the info from exam info into the student's exam struct
+	while(infile2 >> temp_number)
+	{
+		students[0].exams[Exam::number_of_exams].id = temp_number;
+		infile2 >> students[0].exams[Exam::number_of_exams].points_available;
+		infile2 >> students[0].exams[Exam::number_of_exams].weight;
+		Exam::number_of_exams++;
+	}
+	infile2.close();
+	//Transfering the info from the file to each student's exam struct 
+	for(int i = 0; i < Student::students; i++)
+	{
+		for(int j = 0; j < Exam::number_of_exams; j++)
+		{
+			students[i].exams[j].id = students[0].exams[j].id;
+			students[i].exams[j].points_available = students[0].exams[j].points_available;
+			students[i].exams[j].weight = students[0].exams[j].weight;
+		}
+	}
+
+	while(infile3 >> temp_number)
+	{
+		students[0].assignments[Assignment::number_of_assignments].id = temp_number;
+		infile3 >> students[0].assignments[Assignment::number_of_assignments].points_available;
+		Assignment::number_of_assignments++;
+	}
+	infile3.close();
+
+	//Transfering the info from the file to each student's assginment struct
+	for(int i = 0; i < Student::students; i++)
+	{
+		for(int j = 0; j < Assignment::number_of_assignments; j++)
+		{
+			students[i].assignments[j].id = students[0].assignments[j].id;
+			students[i].assignments[j].points_available = students[0].assignments[j].points_available;
+		}
+	}
+}	
+
+//Looking for the ID of the correct student
+int findStudent(int studentID, Student student_array[ ])
+{
+	int index = 0;
+
+	for(int i = 0; i < Student::students; i++)
+	{
+		if(student_array[i].id == studentID)
+			return i;
+		index++;
+	}
+
+	return index;
+}
+
+//Looking for the right exam ID in the array for the student
+int findExam(int examID, Student student_array[ ])
+{
+	int exam_index = 0;
+
+	for(int i = 0; i < Exam::number_of_exams; i++)
+	{
+		for(int j = 0; j < Exam::number_of_exams; j++)
+		{		
+			if(student_array[i].exams[j].id == examID)
+			return i;
+		}
+		exam_index++;
+	}
+
+	return exam_index;
+}
+
+//Looking for the right assignment Id in the assign array for the student
+int findAssignment(int assigID, Student student_array[ ])
+{
+	int assign_index = 0;
+	
+	for(int i = 0; i < Assignment::number_of_assignments; i++)
+	{
+		if(student_array[i].assignments[i].id == assigID)
+			return i;
+		assign_index++;
+	}
+
+	return assign_index;
+}
+
+void readScoreData(string exam_scores, string assig_scores, Student students [ ])
+{
+	int studentID, examID, assigID, student_index, exam_index, assign_index;
+	ifstream infile1, infile2;
+	infile1.open(exam_scores.c_str());
+	infile2.open(assig_scores.c_str());
+	
+	//Getting the info from the exam scores into the student exam struct
+	while(infile1 >> studentID)
+	{	
+		student_index = findStudent(studentID, students); 	
+		infile1 >> examID;
+		exam_index = findExam(examID, students);
+		infile1 >> students[student_index].exams[exam_index].points_scored;
+	}	
+	infile1.close();
+	
+	//Getting the assign scores into the student assign struct
+	while(infile2 >> studentID)
+	{
+		student_index = findStudent(studentID, students);
+		infile2 >> assigID;
+		assign_index = findAssignment(assigID, students);
+		infile2 >> students[student_index].assignments[assign_index].points_scored;
+	}
+	infile2.close();;
+}	
+
+void calculateGrades(Student students[ ])
+{
+	for(int i = 0; i < Student::students; i++)
+	{
+		for(int j = 0; j < Exam::number_of_exams; j++)
+		{
+			students[i].exams[j].percentage += (students[i].exams[j].points_scored / 
+				students[i].exams[j].points_available) * 100;
+		}
+	}
+	
+	for(int i = 0; i < Student::students; i++)
+	{
+		//Assignment::total_assignment_points = 0;
+		int temp;
+		for(int j = 0; j < Assignment::number_of_assignments; j++)
+		{	
+			Assignment::total_assignment_points += students[i].assignments[j].points_scored;
+			temp = students[i].assignments[j].points_available;
+		}
+		students[i].assignment_percentage = ((Assignment::total_assignment_points / temp) * 100)
+			* Assignment::total_weight_of_assignments;
+	}
+	//Getting the total grade percentage for the course
+	for(int i = 0; i < Student::students; i++)
+	{
+		for(int j = 0; j < Exam::number_of_exams; j++)
+		{
+			students[i].grade_percentage += students[i].exams[j].percentage * students[i].exams[j].weight;
+		}
+		students[i].grade_percentage += students[i].assignment_percentage;		
+	}
+}
+//Printing out the reults of the program
+void writeGradeData(string ofile, Student students[ ])
+{
+	ofstream outfile;
+	outfile.open(ofile.c_str());
+
+	for(int i = 0; i < Student::students; i++)
+	{
+		if(students[i].grade_percentage > A)
+			students[i].letter_grade = "A+";
+		else if(students[i].grade_percentage < A && students[i].grade_percentage > AMINUS)
+			students[i].letter_grade = "-A";
+		else if(students[i].grade_percentage < AMINUS && students[i].grade_percentage > BPLUS)
+			students[i].letter_grade = "+B";
+		else if(students[i].grade_percentage < BPLUS && students[i].grade_percentage > B)
+			students[i].letter_grade = "B";
+		else if(students[i].grade_percentage < B && students[i].grade_percentage > BMINUS)
+			students[i].letter_grade = "-B";
+		else if(students[i].grade_percentage < BMINUS && students[i].grade_percentage > CPLUS)
+			students[i].letter_grade = "+C";
+		else if(students[i].grade_percentage < CPLUS && students[i].grade_percentage > C)
+			students[i].letter_grade = "C";
+		else if(students[i].grade_percentage < C && students[i].grade_percentage > CMINUS)
+			students[i].letter_grade = "-C";
+		else if(students[i].grade_percentage < CMINUS && students[i].grade_percentage > DPLUS)
+			students[i].letter_grade = "+D";
+		else if(students[i].grade_percentage < DPLUS && students[i].grade_percentage > D)
+			students[i].letter_grade = "D";
+		else if(students[i].grade_percentage < D && students[i].grade_percentage > DMINUS)
+			students[i].letter_grade = "-D";
+		else
+			students[i].letter_grade = "F";
+
+		outfile << "ID " << "Name " << "Assignments " << "Exam1 " << "Exam 2 " << "Total Grade" << endl;
+		outfile << "--------------------------------------------------------------------------" << endl;
+		for(int j = 0; j < Exam::number_of_exams - 1; j++)
+		{	
+			outfile << students[i].id << " " << students[i].name << " " << students[i].exams[j].percentage 
+			<< " " << students[i].exams[j+1].percentage << " " << students[i].grade_percentage << " "
+			<< students[i].letter_grade << endl;
+		}
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	//filename and filestream variables
+	string sfile, efile, afile, escores, ascores, ofile;
+
+	//keep track of each student in an array
+	Student students[MAX_STUDENTS];
+
+	//check command-line args
+	if(argc != 7)
+	{
+		cout << "Must supply required filename in the correct order:" << endl;
+		     << "      <studinfo> <exinfo> <hwinfo> <exscores>
+					<hwscores> <outfile> " << endl;
+		exit(1);
+	}
+
+	//grab the command-line args
+	sfile = argv[1];
+	efile = argv[2];
+	afile = argv[3];
+	escores = argv[4];
+	ascores = argv[5];
+	ofile = argv[6];
+
+	//process the files, do the calculations, and write the output
+	readSetupData(sfile, efile, afile, students);
+	readScoreData(escores, ascores, students);
+	calculateGrades(students);
+	writeGradeData(ofile, students);
+
+	return 0;
+}
