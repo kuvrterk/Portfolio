@@ -1,0 +1,334 @@
+// Include libraries
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+using namespace std;
+
+// Structure to hold item data
+struct itemType 
+{
+    string NDBNumber;
+    string longName;
+    string dataSource;
+    string upc;
+    string manufacturer;
+    string dataModified;
+    string dataAvailable;
+    string ingredients;
+
+};
+
+// Maximum number of records
+const int MAX_DB_SIZE = 300000;
+
+// Prototypes for functions
+void readFile( ifstream& inFile, vector<itemType>& item, int& count);
+bool openInputFile( ifstream& inFile );
+bool getQuotedString( string& line, int& index, string& subString);
+bool findIngredient( itemType item, string ingredient);							
+string makeStringUpper( string s);									
+int searchForIngredient( vector<itemType>& itemType, int count, string ingredient, bool printEnable );	
+void printRecord( itemType& item, int number );								
+
+int main()
+{
+	// The number of records read into the dataBase.
+	int count=0;		
+
+	// The dataBase 
+	// vector type is used because it's too big for an array.
+	// (on my computer anyway)
+	vector<itemType> dataBase(MAX_DB_SIZE);
+
+	// input file 
+	ifstream inFile;
+
+	// temporary strings
+	string temp="", tempUpper="";
+
+	// a few extra variable
+    int found=0;
+    string stars="";
+
+	// open the input file
+	if (openInputFile( inFile ) )
+	       cout << "File opened correctly "<<endl;
+	else{
+		cout << "Error opening file" << endl << "Exiting...." << endl;
+		return 0;
+	}
+
+	// Read the entire dataBase or MAX_DB_SIZE records.
+	readFile( inFile, dataBase, count);
+
+	// Clear the filestream. This is only needed if the eof was hit.
+	inFile.clear();
+
+	// close the input file
+	inFile.close();
+	
+	// Print out the number of records read
+	cout << count << " records read "<< endl;
+
+	// make sure that the input buffer is empty.
+	cin.ignore( 40, '\n');	
+
+	// prompt the user for the ingredient to search for.  q to quit
+    	cout << "Enter ingredient: ";
+
+	// read the ingredients in to temp.  getline is used so that strings 
+	// with spaces can be used.  Example: dijon mustard
+    	getline(cin, temp, '\n');    
+
+	// Test to see if the user is finished
+    	if ( temp != "q" or temp == "Q" ){
+        	cout << endl<< "Searching for items containing " << temp << endl;
+    	}else
+		return 0;
+	
+	// Execute the ingredient search 
+	do{
+		string ans = "";
+	
+		// search for the number of items that contain the ingredient
+        found = searchForIngredient( dataBase, count, temp, false );
+
+        cout << stars << endl;
+        cout << found << " items found with the ingredient " << temp << endl;
+        cout << stars << endl;
+
+		// prompt the user to see if they want the items containing the ingredient listed.
+		if( found != 0 ){
+			cout <<"Would you like to see a list of items with "<< temp << " as an ingredient? "; 
+			cin >> ans;
+
+			if ( ans == "y" or ans == "Y" ){
+				// search for the number of items that contain the ingredient
+    	    	found = searchForIngredient( dataBase, count, temp, true );
+			}	
+		}
+		
+		// Prompt for the next search ingredent 
+		cout << endl << stars <<endl;
+		cout << "New search"<<endl;
+        cout << "Enter ingredient: ";
+
+		// make sure the input buffer is empty
+		cin.ignore( 40, '\n');	
+        getline(cin, temp, '\n' );
+
+        if ( temp != "q" ){
+            cout << endl<< "Items containing " << temp << endl;
+        }
+
+  }  while ( temp != "q");
+
+
+    return 0;
+}
+
+/*
+Descrption: In this function; we are getting the database and searching for the correct ingredient.
+It would turn the string to uppercase and then search for the correct ingredient.
+parameters: A vector, int, string, and bool
+Return Value: return the number of time its found
+*/
+
+int searchForIngredient( vector<itemType>& dataBase, int count, string ingredient, bool printEnable )
+{
+	int found = 0;
+	bool foundIngredient;
+
+	for(int i = 0; i < count; i++)
+	{
+		ingredient = makeStringUpper(ingredient);		
+		foundIngredient = findIngredient(dataBase[i], ingredient);
+		while(foundIngredient)
+		{			
+			found++;
+			if(printEnable)
+			{
+				printRecord(dataBase[i], found);
+			}
+		}
+	}
+	return found;
+}
+
+/*
+Descrption: Printing out the correct ingredient that's found
+Parameters: Struct and int
+Return: No return value
+*/
+
+void printRecord( itemType& item, int number )
+{
+	for(int i = 0; i < number; i++)
+	{
+		cout << "Item #" << item.NDBNumber << endl;
+		cout << "Name: " << item.longName << endl;
+		cout << "Manufacturer: " << item.manufacturer << endl;
+		cout << "UPC: " << item.upc << endl;
+		cout << "Ingredients: " << item.ingredients << endl;
+	}
+}
+/*
+Descrpition: Checking to see if the file open up correctly or quitting
+Parameter: file
+Return value: It would return a true/false value
+*/
+
+bool openInputFile( ifstream& inFile )
+{
+	while(true)
+	{
+		cout << "Please enter a file name or to quit(q/Q): ";
+		string inputFile;
+		getline(cin, inputFile);
+		inFile.open(inputFile);
+		
+		if(inputFile == "Q" or inputFile == "q")
+			return false;
+		else if(!inFile)
+		{	
+			cout << "Error opening file: " << inputFile << endl;
+			continue;
+		}
+		else  
+			return true;		
+	}
+}
+
+/*
+Description: Getting the line by line in the file and then 
+putting it in the right member
+Parameter: The file, vector, and item
+Return Value: None
+*/
+
+void readFile( ifstream& inFile, vector<itemType>& item, int& itemNumber)
+{
+	string dataString;
+	string subString;
+	
+	while(getline(inFile, dataString))
+	{
+		int index = 0;
+		int itemtypeNumber = 0; 
+		bool nextLine = true;
+		while(nextLine)
+		{
+			//Putting it in the right member
+			nextLine = getQuotedString( dataString, index, subString);
+			if(itemtypeNumber == 0)
+			{	
+				item[itemNumber].NDBNumber = subString;
+			}
+			else if(itemtypeNumber == 1)
+			{	
+				item[itemNumber].longName = subString;
+			}
+			else if(itemtypeNumber == 2)
+			{	
+				item[itemNumber].dataSource = subString;
+			}
+			else if(itemtypeNumber == 3)
+			{
+				item[itemNumber].upc = subString;
+			}
+			else if(itemtypeNumber == 4)
+			{
+				item[itemNumber].manufacturer = subString;
+			}
+			else if(itemtypeNumber == 5)
+			{
+				item[itemNumber].dataModified = subString;
+			}
+			else if(itemtypeNumber == 6)
+			{
+				item[itemNumber].dataAvailable = subString;
+			}
+			else
+			{
+				item[itemNumber].ingredients = subString;
+			}
+			itemtypeNumber++;	//Moving the index so that it would get into the right memeber
+			subString.clear();	//Clearing the string before getting the next line
+			index++;		//Moving the index to skip the "," part
+		}
+		itemNumber++;	
+		if(itemNumber == MAX_DB_SIZE)
+		{
+			cout << "The limited on the database sized has been reached" << endl;
+			break;
+		}
+	}
+	
+	if(itemNumber < MAX_DB_SIZE)
+		cout << "---End of file has been reached---" << endl; 
+			
+}
+
+/*
+Descrpition: Parsing the string in only getting the string within the " ";
+then return true once it got the parse string
+Parameter: string, int, and string
+Return Value: True/False
+*/
+  
+bool getQuotedString( string& line, int& index, string& subString)
+{
+	int returnTrue = 0;
+	for(index; index < line.length(); index++)
+	{
+		//Checking the string for " "
+		if(line[index] == '"')	
+		{	
+			returnTrue++;
+			if(line.length() - 1 == index)
+			{	
+				return false;
+			}
+			else if(returnTrue == 2)
+			{	
+				index++;
+				subString.pop_back();
+				return true;
+			}
+		}
+		subString += line[index + 1];
+	}
+	 
+}
+
+/*
+Descrption: Checking if givene ingredient is within the ingredients
+Parameter: Strct and string
+Return Value: true or False 
+*/
+
+bool findIngredient( itemType item, string ingredient)
+{
+	size_t found = item.ingredients.find(ingredient);
+	if(found != string::npos)
+	{
+		return true;
+	}
+	else
+		return true;
+}
+ 
+/*
+Descrption: Making the string uppercase
+Parameter: string
+Return Value: String
+*/
+
+string makeStringUpper(string s)
+{
+	for(unsigned int i = 0; i < s.length(); i++)
+		s[i] = toupper(s[i]);
+
+	return s;
+}
