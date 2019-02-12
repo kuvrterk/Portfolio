@@ -1,0 +1,622 @@
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+
+// ****************************************************************
+//  Program specific constants.
+
+enum allowedTypes {INTEGER, FLOAT, DOUBLE, STRING, NONE};
+
+#define MIN_LENGTH 10
+#define MAX_LENGTH 250
+#define NUMSPERLINE 5
+#define MAXVALUE 1000
+#define MAXSTRING 11
+#define MINSTRING 5
+#define FRACT 3.14159/3.2
+// ****************************************************************
+
+allowedTypes getOperation();
+int getLength();
+
+void generateList(int arr[], int n);
+void generateList(float arr[], int n);
+void generateList(double arr[], int n);
+void generateList(string arr[], int n);
+
+int maximum(int list[],int size);
+float maximum(float list[], int size);
+double maximum(double list[], int size);
+string maximum(string list[], int size);
+
+int minimum(int list[],int size);
+float minimum(float list[], int size);
+double minimum(double list[], int size);
+string minimum(string list[], int size);
+
+void displayResults(int arr[], int max, int min, int n);
+void displayResults(float arr[], float max, float min, int n);
+void displayResults(double arr[], double max, double min, int n);
+void displayResults(string arr[], string max, string min, int n);
+
+void shellSort(int arr[], int size);
+void shellSort(float arr[], int size);
+void shellSort(double arr[], int size);
+void shellSort(string arr[], int size);
+
+
+// ****************************************************************
+
+int main()
+{
+// --------------------------------------------
+//  Data declarations
+//	includes arrays for each of the various types.
+
+	int	iNums[MAX_LENGTH];
+	int	imin, imax;
+
+	float	fNums[MAX_LENGTH];
+	float	fmin, fmax;
+
+	double	dNums[MAX_LENGTH];
+	double	dmin, dmax;
+
+	string sWords[MAX_LENGTH];
+	string smin, smax;
+
+	allowedTypes	myType;
+	int	length;
+
+// --------------------------------------------
+//  Main processing loop
+//	get type from user and
+//	if needed, get length
+//	if needed, generate data
+//	get min and max
+//	sort numbers
+//	display data
+
+	while (true) {
+
+		myType = getOperation();
+
+		if ( myType == INTEGER || myType == FLOAT 
+			|| myType == DOUBLE	|| myType == STRING)
+			length = getLength();
+
+		if (myType == NONE) {
+			cout << endl << "Game over." << endl <<
+				"Thanks for playing." << endl;
+			break;
+		}
+
+		switch (myType) {
+			case INTEGER:
+				generateList(iNums, length);
+				imax = maximum(iNums, length);
+				imin = minimum(iNums, length);
+				shellSort(iNums, length);
+				displayResults(iNums, imax, imin, length);
+				break;
+			case FLOAT:
+				generateList(fNums, length);
+				fmax = maximum(fNums, length);
+				fmin = minimum(fNums, length);
+				shellSort(fNums, length);
+				displayResults(fNums, fmax, fmin, length);
+				break;
+			case DOUBLE:
+				generateList(dNums, length);
+				dmax = maximum(dNums, length);
+				dmin = minimum(dNums, length);
+				shellSort(dNums, length);
+				displayResults(dNums, dmax, dmin, length);
+				break;
+			case STRING:
+				generateList(sWords, length);
+				smax = maximum(sWords, length);
+				smin = minimum(sWords, length);
+				shellSort(sWords, length);
+				displayResults(sWords, smax, smin, length);
+				break;
+			default:
+				cout << "Illegal entry "<< endl;
+		}
+	}
+
+	return EXIT_SUCCESS;
+}
+// ****************************************************************
+//  Ask user for data type of the operation.
+//	Must be integer, float, double, string, or quit
+
+allowedTypes getOperation()
+{
+	char answer;
+	allowedTypes myType;
+	bool	goodInput = false;
+
+	while (!goodInput) {
+		cout << "-------------------------------" << endl;
+		cout << "Select data type for operations" << endl;
+		cout << "     Integers (I/i)" << endl;
+		cout << "     Floats (F/f)" << endl;
+		cout << "     Doubles (D/d)" << endl;
+		cout << "     Strings (S/s)" << endl;
+		cout << "     Exit (Q/q)" << endl;
+		cout << "Selection (I/i/F/f/D/d/S/s/Q/q): ";
+		cin.clear();
+		cin >> answer;
+
+		switch (answer) {
+			case 'I':
+			case 'i':
+				myType = INTEGER;
+				goodInput = true;
+				break;
+			case 'F':
+			case 'f':
+				myType = FLOAT;
+				goodInput = true;
+				break;
+			case 'D':
+			case 'd':
+				myType = DOUBLE;
+				goodInput = true;
+				break;
+			case 'S':
+			case 's':
+				myType = STRING;
+				goodInput = true;
+				break;
+			case 'Q':
+			case 'q':
+				myType = NONE;
+				goodInput = true;
+				break;
+			default:
+				cout << "Error, must be I/i/F/f/D/d/S/s/Q/q " << endl;
+				cout << "Please re-enter." << endl;
+		}
+	}
+
+	return myType;
+}
+/*
+ Descrition: asking the length of the random numbers
+ Input: No parameters
+ Output: Return the length
+*/
+int getLength()
+{
+	cout << "Please enter a length: ";
+	int length;
+	cin >> length;
+
+	if(length >= MIN_LENGTH && length <= MAX_LENGTH)
+	{	
+		return length;
+	}
+	else
+		cout << "Must be between 10 and 250...Try again" << endl;
+	return length; //So that the compler doesn't complain
+}
+/*
+ Description: Generating random numbers
+ Input: Getting the int array and size of the length
+ Output: No return function
+*/
+void generateList (int arr[], int n)
+{
+	int randomInt;
+	
+	for(int i = 0; i < n; i++)
+	{
+		randomInt = rand() % MAXVALUE;
+		arr[i] = randomInt;
+	} 
+}
+// Remember to multiply float and double values
+// by FRACT before storing in array.
+/*
+ Description: Generating random numbers
+ Input: Getting the float array and size of the length
+ Output: No return function
+*/
+void generateList (float arr[], int n)
+{
+	float randomInt;
+	
+	for(int i = 0; i < n; i++)
+	{
+		randomInt = rand() % MAXVALUE;
+		arr[i] = randomInt * FRACT;
+	} 
+}
+/*
+ Description: Generating random numbers
+ Input: Getting the double array and size of the length
+ Output: No return function
+*/
+void generateList (double arr[], int n)
+{
+	double randomInt;
+	
+	for(int i = 0; i < n; i++)
+	{
+		randomInt = rand() % MAXVALUE;
+		arr[i] = randomInt * FRACT;
+	} 
+}
+/*
+ Description: Generating random strings, finding strings between 5 to 11,
+ and checking if the char is a character or not
+ Input: Getting the string array and size of the length
+ Output: No return function
+*/
+void generateList( string str[], int n)
+{
+	int stringLength;
+	char randCharacter;
+	string randWord;
+
+	for(int i = 0; i < n; i++)
+	{
+		stringLength = rand() % MAXSTRING;
+		bool leaveLoop = true;
+		//Checking to see if the string is between 5 - 11
+		while(leaveLoop)
+		{
+			if(stringLength >= MINSTRING)
+			{
+				leaveLoop = false;
+			}
+			else
+				stringLength = rand() % MAXSTRING;
+		}		
+		//Get the string's length and generate random char 
+		//making sure its a char and adding into the array
+		for(int j = 0; j < stringLength; j++)
+		{
+			randCharacter = rand() % 122;
+			while(!(isalnum(randCharacter)))
+			{
+				randCharacter = rand() % 122;
+			}
+			randWord += randCharacter;
+		}
+		
+		str[i] = randWord;
+		randWord.clear();
+	}			 
+}
+/*
+ Description: Finding the max number in the array
+ Input: Getting the int array and size of the length
+ Output: Returning the max number
+*/
+int maximum (int lst[], int size)
+{
+	int maxValue = 0;
+	for(int i = 0; i < size; i++)
+	{
+		if(maxValue < lst[i])
+		{
+			maxValue = lst[i];
+		}
+	}	
+	return maxValue;
+}
+/*
+ Description: Finding the max number in the array
+ Input: Getting the float array and size of the length
+ Output: Returning the max number
+*/
+float maximum (float lst[], int size)
+{
+	float maxValue = 0;
+	for(int i = 0; i < size; i++)
+	{
+		if(maxValue < lst[i])
+		{
+			maxValue = lst[i];
+		}
+	}	
+	return maxValue;
+}
+/*
+ Description: Finding the max number in the array
+ Input: Getting the double array and size of the length
+ Output: Returning the max number
+*/
+double maximum (double lst[], int size)
+{
+	double maxValue = 0;
+	for(int i = 0; i < size; i++)
+	{
+		if(maxValue < lst[i])
+		{
+			maxValue = lst[i];
+		}
+	}
+	return maxValue;
+}
+/*
+ Description: Finding the max string(ASCII char) in the array
+ Input: Getting the string array and size of the length
+ Output: Returning the max string
+*/
+string maximum (string lst[], int size)
+{
+	string maxString = lst[0];
+	for(int i = 1; i < size; i++)
+	{
+		if(maxString < lst[i])
+		{
+			maxString = lst[i];
+		}
+	}
+	return maxString;
+}
+/*
+ Description: Finding the min number in the array
+ Input: Getting the int array and size of the length
+ Output: Returning the min number
+*/
+int minimum (int lst[], int size)
+{
+	int minValue = lst[0];
+	for(int i = 1; i < size; i++)
+	{
+		if(minValue > lst[i])
+		{
+			minValue = lst[i];
+		}
+	}
+	return minValue;
+}
+/*
+ Description: Finding the min number in the array
+ Input: Getting the float array and size of the length
+ Output: Returning the min number
+*/
+float minimum (float lst[], int size)
+{
+	float minValue = lst[0];
+	for(int i = 1; i < size; i++)
+	{
+		if(minValue > lst[i])
+		{
+			minValue = lst[i];
+		}
+	}
+	return minValue;
+}
+/*
+ Description: Finding the min number in the array
+ Input: Getting the double array and size of the length
+ Output: Returning the min number
+*/
+double minimum (double lst[], int size)
+{
+	double minValue = lst[0];
+	for(int i = 1; i < size; i++)
+	{
+		if(minValue > lst[i])
+		{
+			minValue = lst[i];
+		}
+	}
+	return minValue;
+}
+/*
+ Description: Finding the min string in the array
+ Input: Getting the string array and size of the length
+ Output: Returning the min number
+*/
+string minimum (string lst[], int size)
+{
+	string maxString = lst[0];
+	for(int i = 1; i < size; i++)
+	{
+		if(maxString > lst[i])
+		{
+			maxString = lst[i];
+		}
+	}
+	return maxString;
+} 
+/*
+ Description: Displaying the results of the Int
+ Input: Int array, max, min, and size of the length
+ Output: No return
+*/
+void displayResults (int lst[], int max, int min, int aSize)
+{
+	cout << "-----------------------------------" << endl;
+	cout << "Integar Sorted List:" << endl;
+	int nextLine = 0;
+	for(int i = 0; i < aSize; i++)
+	{
+		if(nextLine == NUMSPERLINE)
+		{
+			cout << endl;	
+			nextLine = 0;
+		}
+		cout << left << setw(5) << lst[i]; 
+		nextLine++;
+	}
+	cout << endl << endl; 
+	cout << "The smallest Interger number is: " << min << endl;
+	cout << "The Largest Interger number is: " << max << endl;
+	cout << endl;
+}
+/*
+ Description: Displaying the results of the float
+ Input: float array, max, min, and size of the length
+ Output: No return
+*/
+void displayResults (float lst[], float max, float min, int size)
+{	
+	cout << fixed << setprecision(2);
+	cout << "-----------------------------------" << endl;
+	cout << "Floated Sorted List: " << endl;
+	int nextLine = 0;
+	
+	for(int i = 0; i < size; i++)
+	{
+		if(nextLine == NUMSPERLINE)
+		{
+			cout << endl;	
+			nextLine = 0;
+		}
+		cout << left << setw(8) << lst[i];
+		nextLine++;
+	}
+	cout << endl << endl;
+	cout << "The smallest Interger number is: " << min << endl;
+	cout << "The Largest Interger number is: " << max << endl;
+	cout << endl;
+}
+/*
+ Description: Displaying the results of the double
+ Input: double array, max, min, and size of the length
+ Output: No return
+*/
+void displayResults (double lst[], double max, double min, int size)
+{
+	cout << fixed << setprecision(2);
+	cout << "-----------------------------------" << endl;
+	cout << "Double Sorted List:" << endl;
+	int nextLine = 0;
+	for(int i = 0; i < size; i++)
+	{
+		if(i == NUMSPERLINE)
+		{
+			cout << endl;	
+			nextLine = 0;
+		}
+		cout << left << setw(8) << lst[i];
+		nextLine++;
+	}
+	cout << endl << endl;
+	cout << "The smallest Interger number is: " << min << endl;
+	cout << "The Largest Interger number is: " << max << endl;
+	cout << endl;
+}
+/*
+ Description: Displaying the results of the string
+ Input: string array, max, min, and size of the length
+ Output: No return
+*/
+void displayResults (string lst[], string max, string min, int size)
+{	
+	cout << "-----------------------------------" << endl;
+	cout << "String Sorted List:" << endl;
+	int nextLine = 0;
+	for(int i = 0; i < size; i++)
+	{
+		if(nextLine == NUMSPERLINE)
+		{
+			cout << endl;	
+			nextLine = 0;
+		}
+		cout << left << setw(12) << lst[i]; 
+		nextLine++;
+	}
+	cout << endl << endl; 
+	cout << "The smallest Interger number is: " << min << endl;
+	cout << "The Largest Interger number is: " << max << endl;
+	cout << endl;
+
+}
+/*
+ Description: Shell sorting for the double array
+ Input: double array and length
+ Output: No return
+*/
+void shellSort( double a[], int size )
+{
+	for(int i = size/2; i > 0; i /= 2)
+	{
+		for(int j = i; j < size; j += 1)
+		{ 
+			double temp = a[j];
+			int k;
+			for(k = j; k >= i && a[k - i] > temp; k -= i)
+			{
+				a[k] = a[k - i];
+			}		
+			a[k] = temp;
+		}
+	}
+}
+/*
+ Description: Shell sorting for the string array
+ Input: string array and length
+ Output: No return
+*/
+void shellSort(string a[], int size )
+{
+	for(unsigned int i = size/2; i > 0; i /= 2)
+	{
+		for(int j = i; j < size; j += 1)
+		{ 
+			string temp = a[j];
+			unsigned int k;
+			for(k = j; k >= i && a[k - i] > temp; k -= i)
+			{
+				a[k] = a[k - i];
+			}
+			a[k] = temp;
+		}
+	}
+}
+/*
+ Description: Shell sorting for the float array
+ Input: float array and length
+ Output: No return
+*/
+void shellSort( float a[], int size )
+{
+	for(int i = size/2; i > 0; i /= 2)
+	{
+		for(int j = i; j < size; j += 1)
+		{ 
+			float temp = a[j];
+			int k;
+			for(k = j; k >= i && a[k - i] > temp; k -= i)
+			{
+				a[k] = a[k - i];
+			}		
+			a[k] = temp;
+		}
+	}
+}
+/*
+ Description: Shell sorting for the int array
+ Input: int array and length
+ Output: No return
+*/
+void shellSort( int a[], int size )
+{
+	for(int i = size/2; i > 0; i /= 2)
+	{
+		for(int j = i; j < size; j += 1)
+		{ 
+			int temp = a[j];
+			int k;
+			for(k = j; k >= i && a[k - i] > temp; k -= i)
+			{
+				a[k] = a[k - i];
+			}		
+			a[k] = temp;
+		}
+	}
+}
