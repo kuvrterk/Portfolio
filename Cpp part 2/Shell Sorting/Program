@@ -1,3 +1,9 @@
+  Description:Asking the user to enter either a int, float, double, or string
+  Then whatever is chosen get generate random numbers and place them in the array
+  get the max, min, and sort them. Then print the results
+  Input: The user asking for what datatype and length
+  Output: the results of the finding the max, min, searching
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -5,7 +11,6 @@
 #include <iomanip>
 
 using namespace std;
-
 
 // ****************************************************************
 //  Program specific constants.
