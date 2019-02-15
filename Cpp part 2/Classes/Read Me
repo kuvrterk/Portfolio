@@ -1,0 +1,25 @@
+What this program does.
+
+1.It takes a class name particleType and it has a few varibales/functions needed to perform the needs of the program and 2-D array.
+It has a particle move within the 2-D array determine on the direction and what number it's hitting. The numbers within the 2-D array are 
+random generate between 1 - 15 and the borders of the array is by -1. And stuck by a non-zero number or -1, then the particle would decrese and
+the number that the particle is on top of deceseres as well until 0.
+
+2. The program creates a 2-D array determine by pre-pared variables to make sure it works, then by the user. 
+  - It would get the particle's energy between MAX and MIN
+  - Random numbers between 1 - 15
+  - Check to see if the varibales are within the range
+  - Get the direction of where the particle
+  - Get the location of the particle
+  - Determine where the particle is going to be headed by the set of rules created.
+  - Generate random numbers to determine the direction of where the particle may move.
+  - The size of the 2-D array
+ 
+3. Example
+5x5 array
+-1 -1 -1 -1 -1  1.The particle would start at [0][0] and the direction is south;
+-1 13  3  9 -1    -The location of the particle is the NWc so it would move east
+-1 15 10  0 -1  2.The particle is at [0][1] at the Nwall so the direction now would be south
+-1  3  2  1 -1  3.The particle is at [1][1] hitting 13 so it would go down and so does the particle
+-1 -1 -1 -1 -1    -But it would generate a random number 0 - 7 to determine the direction of where the particle would move next
+                4. This would stop until the particle's energy is zero
