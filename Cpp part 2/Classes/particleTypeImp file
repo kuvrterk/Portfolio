@@ -1,0 +1,447 @@
+#include "particleType.h"
+
+// Display the box status. If the particle leaves the box, the program will exit.
+// The particle is displayed in red
+void particleType::printBox( )
+{
+    // verify that the particle is inside the box
+    if ( currentX < 0 or currentY < 0 or currentX >= sizeX or currentY >= sizeY)
+    {
+        cout << "Error - particle has escaped the box [x,y]: "
+             << "[" << currentX <<"," << currentY <<"]"<<endl;
+        cout << "Program exiting ....."<<endl;
+        exit(0);
+    }
+
+    if( display ){
+        // clear screen
+        cout<< "\033[2J\033[1;1H";
+
+		// display the active box
+        for (int i=0; i<sizeX; i++){
+            for (int j=0; j< sizeY; j++){
+	
+				// if this is the particle position, write it out in red
+                if ( i==currentX and j==currentY ){
+                   cout << "\033[1;31m" << setw(5) << particleEnergy<<"\033[0m";
+                } else{
+					// write out the obsticles in white
+                    cout << setw(5) << box[i][j];
+				}
+            }
+            cout << endl;
+        }
+	
+		// output the current particle position
+        cout<< "X:Y "<< currentX <<":" << currentY << " D: ";
+		
+
+		// output the current direction
+        switch( direction ){
+            case W:
+                cout<<"W"<<endl;
+                break;
+
+            case S:
+                cout<<"S"<<endl;
+                break;
+
+            case E:
+                cout<<"E"<<endl;
+                break;
+
+            case N:
+                cout<<"N"<<endl;
+                break;
+
+            case NE:
+                cout<<"NE"<<endl;
+                break;
+
+            case NW:
+                cout<<"NW"<<endl;
+                break;
+
+            case SW:
+                cout<<"SW"<<endl;
+                break;
+
+            case SE:
+                cout<<"SE"<<endl;
+                break;
+        }
+
+		// output other useful information
+        cout << "Path Length: "<< pathLength << endl;
+        cout << "Current box energy: "<< getBoxEnergy() << endl;
+        cout << "Obstacle energy @ particle: "<< box[currentX][currentY]<<endl;
+
+		// delay to allow for easier viewing
+        sleep_for(milliseconds(timeDelay));
+    }
+}
+/*
+Descrption: setting up the array
+input: None
+Output: None
+*/
+particleType::particleType()
+{
+	for(int i = 0; i < MAX_X; i++)
+	{
+		for(int j = 0; j < MAX_Y; j++)
+		{
+			box[i][j] = 0;
+		}
+	}
+
+	currentX = 0;
+	currentY = 0;
+	particleEnergy = MIN_ENERGY;
+	sizeX = 5;
+	sizeY = 5;
+	maxObstacleEnergy = MIN_ENERGY;
+}
+/*
+Descrption: Getting the x/y sizes and checking for the certia
+Input: int xSize and int ySize
+Output: None
+*/
+void particleType::setBoxSize(int xSize, int ySize)
+{
+	//Size x/y is equal/less then max and is greater/equal to 2 (3X3)
+	if(xSize <= MAX_X && xSize >= 2)	
+	{
+		sizeX = xSize;
+	}
+	else if(ySize > MAX_Y || ySize < 2)
+	{	
+		cout << "Error the value is out of range, setting X to the max value" << endl;
+		sizeX = MAX_X;
+	}
+	
+	if(ySize <= MAX_Y && ySize >= 2)
+	{
+		sizeY = ySize;
+	}	
+	else if(ySize > MAX_Y || ySize < 2)
+	{
+		cout << "Error the value is out of range, setting Y to the max value" << endl;		
+		sizeY = MAX_Y;
+	}
+}
+/*
+Descrption: Getting the energy and seeing if it fits in the certia
+Input: int energy
+Output: None
+*/
+void particleType::setMaxObstacleEnergy(int energy)
+{
+	//Checks to see if energy is between 1 to 15
+	if(energy >= 1 && energy <= MAX_OBST_VALUE)
+	{
+		maxObstacleEnergy = energy;
+	}
+	else if(energy < 1 || energy > 15)
+	{
+		cout << "Error, the value is out of range, setting energy to the max value" << endl;
+		maxObstacleEnergy = MAX_OBST_VALUE;
+	}
+}
+/*
+Descrption: Getting the particle energy and seeing if it fits in the certia
+Input: int gEnergy
+Output: None
+*/
+void particleType::setParticleEnergy(int gEnergy)
+{
+	//Checks to see if the energy is between
+	if(gEnergy >= MIN_ENERGY && gEnergy <= MAX_ENERGY)
+	{
+		particleEnergy = gEnergy;
+	}
+	else
+	{
+		cout << "Error, the value is out of range, setting the particle energy to the min value" << endl;
+		particleEnergy = MIN_ENERGY;
+	}
+}
+/*
+Descrption: Checking on the time
+Input: int time
+Output: None
+*/
+void particleType::setTimeDelay(int time)
+{
+	if(time <= 0)
+	{
+		cout << "Error; cannot have zero time, setting it to 100" << endl;
+		timeDelay = 100;
+	}
+	else
+	{
+		timeDelay = time;
+	}
+}
+/*
+Descrption: seeing to print the box
+Input: Bool
+Output: None
+*/
+void particleType::setOutputMode(bool enablePrint)
+{
+	display = enablePrint;
+}
+/*
+Descrption: Calling on the location/move particle function/initBox functions
+and checking the particle energy
+Input: None
+Output: None
+*/
+void particleType::startParticle()
+{
+	initBox();
+	bool endEnergy = true;
+	//When the Particle reaches 0, then it would turn false and stop
+	while(endEnergy)
+	{
+		if(particleEnergy < 2)
+			endEnergy = false;
+
+		if(box[currentX][currentY] == 0)
+		{
+			moveParticle();
+			pathLength++;
+		}
+		else
+		{
+			getDirection();	
+			particleEnergy--;
+			moveParticle();
+		}
+		printBox();
+	}
+}
+/*
+Descrption:Checking the eLocation of where the particle is at and setting
+the direction equal to the elocation
+Input: None
+Output: None
+*/
+void particleType::getDirection()
+{
+	particleType::eLocationType newLocation = findLocation();
+	int randomDirection;
+	//Checking to see what the direction the particle is
+	//If it's center then generate a new number
+	//If it's an other location then set direction to the location
+	switch(newLocation)
+	{
+		case CENTER:
+			randomDirection = rand() % 8;
+			switch(randomDirection)
+			{
+				case 0:
+					direction = W;
+					break;
+				case 1:
+					direction = S;
+					break;
+				case 2:
+					direction = E;
+					break;
+				case 3:
+					direction = N;
+					break;
+				case 4:
+					direction = NE;
+					break;
+				case 5:
+					direction = NW;
+					break;
+				case 6:
+					direction = SW;
+					break;
+				case 7:
+					direction = SE;
+					break;
+				default:
+					cout << "Error; randomDirection is not the correct values" << endl;
+			}
+			break;
+		case Nwall:
+			direction = SW;
+			break;
+		case Swall:
+			direction = NE;
+			break;
+		case Wwall:
+			direction = SE;
+			break;
+		case Ewall:
+			direction = NW;
+			break;
+		case NWc:
+			direction = E;
+			break;
+		case NEc:
+			direction = S;
+			break;
+		case SWc:
+			direction = N;
+			break;
+		case SEc:
+			direction = W;
+			break;
+		default:
+			cout << "findLocation is wrong" << endl;
+	}		
+}
+/*
+Descrption: Checking to see the location of where the particle is at
+and setting the current location of it
+Input: None
+Output: the currentLocation
+*/
+particleType::eLocationType particleType::findLocation()
+{
+	particleType::eLocationType currentLocation;
+	
+	if(currentX == 0 && currentY == 0)
+	{
+		currentLocation = NWc;
+	}
+	else if(currentX == 0 && currentY == sizeY - 1)
+	{
+		currentLocation = NEc;
+	}
+	else if(currentX == sizeX - 1 && currentY == 0)
+	{	
+		currentLocation = SWc;
+	}
+	else if(currentX == sizeX - 1 && currentY == sizeY - 1)
+	{
+		currentLocation = SEc;
+	}
+	else if(currentX == 0 && (currentY >= 1 && currentY <= sizeY - 2))
+	{
+		currentLocation = Nwall;
+	}
+	else if(currentX == sizeX - 1 && (currentY >= 1 && currentY <= sizeY - 2))
+	{
+		currentLocation = Swall;
+	}
+	else if((currentX >= 1 && currentX <= sizeX - 2) && currentY == 0)
+	{
+		currentLocation = Wwall;
+	}
+	else if((currentX >= 1 && currentX <= sizeX - 2) && currentY == sizeY - 1)
+	{
+		currentLocation = Ewall;
+	}
+	else
+		currentLocation = CENTER;
+
+	return currentLocation;
+}
+/*
+Descrption: Moving the particle to the right array base on the location
+Input: None
+Output: None 
+*/
+void particleType::moveParticle()
+{
+	//Location is going to be the same...Dont change it
+	//Moving the particle to the next array
+	switch(direction)
+	{
+		case S:
+			currentX++;
+			break;
+		case N:
+			currentX--;
+			break;
+		case E:
+			currentY++;
+			break;
+		case W:
+			currentY--;
+			break;
+		case NW:
+			currentX--;
+			currentY--;
+			break;
+		case NE:
+			currentX--;
+			currentY++;
+			break;
+		case SW:
+			currentX++;
+			currentY--;
+			break;
+		case SE:
+			currentX++;
+			currentY++;
+			break;
+	}
+
+	pathLength++;
+}
+/*
+Descrption: Checking to see if the two sizes are zero or not and
+setting up the array with random numbers or -1
+Input: None
+Output: None
+*/
+void particleType::initBox()
+{
+	int randomNumber;
+	if(sizeX == 0 && sizeY == 0)
+	{
+		cout << "Error, there is no value set in the box, setting it to default value" << endl;
+		sizeX = 5;
+		sizeY = 5;
+	}
+	
+	//Sets up the -1 around the box
+	for(int i = 0; i < sizeX; i++)
+	{
+		
+		for(int j = 0; j < sizeY; j++)
+		{
+			randomNumber = rand() %  maxObstacleEnergy;
+
+			if(i == 0 || i == sizeX - 1 || j == sizeY - 1)
+			{
+				box[i][j] = -1;
+			}			
+			else
+			{
+				box[i][0] = -1;
+				box[i][j + 1] = randomNumber;
+			}
+		}	
+	}
+	pathLength = 0;
+	direction = S;
+}
+/*
+Descerption:Checking to see if the certain array is a non-zero, zero, ot negative #
+If so minus the particle engergy or not
+Input: None
+Output: particle energy
+*/
+int particleType::getBoxEnergy()
+{
+	if(box[currentX][currentY] > 0)
+	{
+		particleEnergy--;
+		box[currentX][currentY] -= 1;
+	}
+	else if(box[currentX][currentY] == -1)
+	{
+		particleEnergy--;
+	}
+	
+	return particleEnergy;
+}
