@@ -1,0 +1,55 @@
+// particleType.h
+
+// header guard
+#ifndef PARTICLE_TYPE_H
+#define PARTICLE_TYPE_H
+
+#include <iostream>
+#include <iomanip>
+#include <chrono>
+#include <thread>
+
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono;      // system_clock, seconds, milliseconds
+using namespace std;
+
+class particleType
+{
+    public:
+	particleType();
+	void setOutputMode(bool);
+	void startParticle();
+	void setBoxSize(int, int);
+	void setMaxObstacleEnergy(int);
+	void setParticleEnergy(int);
+    	void setTimeDelay(int); 
+
+     private:
+        enum eDirectionType { W, S, E, N, NE, NW, SW, SE };
+        enum eLocationType { CENTER, Nwall, Ewall, Swall, Wwall, NWc, NEc, SWc, SEc};
+        void printBox();
+	void getDirection();
+	void moveParticle();
+	eLocationType findLocation();
+	eDirectionType direction;
+	int getBoxEnergy();
+	void initBox();
+	int currentX;
+	int currentY;
+	int particleEnergy;
+	int sizeX;
+	int sizeY;
+	int pathLength;
+	int timeDelay = 100;
+	bool display = false;
+	int maxObstacleEnergy = 0;
+	static const int MIN_ENERGY = 5;
+	static const int MAX_ENERGY = 5000;
+	static const int MAX_X = 25;
+	static const int MAX_Y = 25;
+	static const int MAX_OBST_VALUE = 15;	
+	int box[MAX_X][MAX_Y];
+};
+
+
+#endif
