@@ -1,0 +1,75 @@
+#include "student.h"
+#include "underGrad.h"
+
+underGrad::underGrad(string laName, string firName, string studID, string studentMajorCode,
+			double GPA, double charge, double finanicalAide, string studentAdvisor,
+			sStat sStats) : student(laName, firName, studID, studentMajorCode, GPA, charge, finanicalAide)
+{
+	advisor = studentAdvisor;
+	sStatus = sStats;
+}
+/*
+Descrption: Returning the advisor
+Input: None
+OutPut: advisor
+*/
+string underGrad::getAdvisor() const
+{
+	return advisor;
+}
+/*
+Descrption: Returing the status
+Input: None
+OutPut: student status
+*/
+sStat underGrad::getStatus() const
+{
+	return sStatus;
+}
+//Setters
+/*
+Descrption: Setting the advisor
+Input: string student advisor
+OutPut:None
+*/
+void underGrad::setAdvisor(string studentAdvisor)
+{
+	advisor = studentAdvisor;
+}
+/*
+Descrption: Setting the status
+Input: sStat student status
+OutPut None
+*/
+void underGrad::setStatus(sStat studentStatus)
+{
+	sStatus = studentStatus;
+}
+/*
+Descrption: Showing the undergrad student
+Input: None
+OutPut None
+*/
+void underGrad::showStudent()
+{	
+	underGrad::student::showStudent();
+	double GPA = underGrad::student::getGPA();
+	
+	//Fixing the output of the file
+	if(GPA >= 1.7)
+	{
+		if(advisor == "Yfantis")
+			cout << right << setw(14) << "Advisor: " << setw(2) << advisor << setw(23) << "Status: " << "PROBATION" << endl;
+		else if(advisor == "Gewali")
+			cout << setw(14) << "Advisor: " << setw(2) << advisor << setw(24) << "Status: " << "PROBATION" << endl;
+		else if(advisor == "Pederson")
+			cout << setw(14) << "Advisor: " << setw(2) << advisor << setw(22) << right << "Status: " << "PROBATION" << endl;
+		else
+			cout << setw(14) << "Advisor: " << setw(2) << advisor << setw(27) << right << "Status: " << "PROBATION" << endl;
+	}
+	else if(sStatus == 3)
+		cout << setw(14) << "Advisor: " << setw(2) << advisor << setw(23) << right << "Status: " << "NONE" << endl;
+	else
+		cout << setw(14) << "Advisor: " << setw(2) << advisor << setw(27) << right << "Status: " << "GOOD" << endl;
+
+}
