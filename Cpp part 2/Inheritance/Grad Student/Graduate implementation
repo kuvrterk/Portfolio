@@ -1,0 +1,86 @@
+#include "student.h"
+#include "underGrad.h"
+#include "grad.h"
+/*
+Descrption: The constructor of the grad class while calling the undergrad constructor
+Input: string lastname, firstname, studentID, major code, advisor; double fin aid, GPA, charge, grad fees
+Output: None
+*/
+grad::grad(string laName, string firName, string studID, string studentMajorCode, double GPA, double charge, 
+		double finanicalAide, string studentAdvisor, sStat sStats, bool GAFlag, double graduateFees)
+		: underGrad(laName, firName, studID, studentMajorCode, GPA, charge, finanicalAide, studentAdvisor, sStats)
+{
+	if(graduateFees >= 0.0 && graduateFees <= MAX_FEES)
+	{
+		gradFees = graduateFees;
+	}
+	else
+	{
+		cout << "Error, grad fees are invalid setting them to 0.0" << endl;
+		gradFees = 0.0;
+	}
+	isGA = GAFlag;
+}
+//Getters
+/*
+Descrption: Getting the GA status
+Input: None
+Output: Bool GA status
+*/
+bool grad::getGAstatus() const
+{
+	return isGA;
+}
+/*
+Descrption: Getting the grad fees
+Input: None
+Output: Double grad fees
+*/
+double grad::getGradFees() const
+{
+	return gradFees;
+}
+//Setters
+/*
+Descrption: Setting the GA status
+Input: bool student GA status
+Output: None
+*/
+void grad::setGAstatus(bool flag)
+{
+	isGA = flag;
+}
+/*
+Descrption: Setting the grad fee
+Input: double grad fee
+Output: None
+*/
+void grad::setGradFees(double graduateFees)
+{
+	if(graduateFees >= 0.0 && graduateFees <= MAX_FEES)
+	{
+		gradFees = graduateFees;
+	}
+	else
+	{
+		cout << "Error, grad fees are invalid setting them to 0.0" << endl;
+		gradFees = 0.0;
+	}
+}	
+/*
+Descrption: Printing out the grad student
+Input: None
+Output: None
+*/
+void grad::showStudent()
+{
+	//Calling the undergrad constructor
+	grad::underGrad::showStudent();
+	if(!(isGA))
+	{
+		cout << right << setw(14) << "Grad Fees: " << gradFees << setw(38) << "Graduate Assistant: " << "No" << endl;
+	}
+	else
+		cout << right << setw(14) << "Grad Fees: " << gradFees << setw(38) << "Graduate Assistant: " << "Yes" << endl;
+		
+}
