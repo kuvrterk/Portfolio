@@ -1,0 +1,161 @@
+// Descrption: Test the studentImp file and providing values to it
+// Input: The student.h file(class)
+// Output: The student report
+
+#include <iostream>
+#include <string>
+
+#include "student.h"
+
+using namespace std;
+
+
+int main()
+{
+// ----------------------------------------------------------------------
+//  Display a simple header...
+
+	string	bars;
+	bars.append(70,'-');
+
+	cout << endl << bars << endl;
+	cout << "CS 202 - Assignment #4" << endl;
+	cout << "Student Class -> Test Program." << endl << endl;
+
+// ----------------------------------------------------------------------
+//  Create some student objects.
+	cout << endl << "Create several test students" << endl;
+	
+	//		last	 , first,	studentID	, major, gpa, charges, aid							
+	student simpson("Simpson", "Homer", "L000001254", "NUE", 1.0, 1000.00);		
+	student leonard("Leonard", "Lenny", "L000018716", "NUE", 3.2, 975.25);		
+	student carlson("Carlson", "Carl", 	"L000022716", "NUE", 2.75, 2221.50);
+	student bouvier("Bouvier", "Selma", "L000011116", "UNS", 2.25, 1400.75);
+	student krabappel("Krabappel", "Edna", "L000021231", "WOM", 2.15, 1500.0, 1000.00);
+	student neahasapeemapetilon("Nahasapeemapetilon", "Apu", "L000012123", "FOL", 3.45, 1600.0);
+	student groundskeeper("Groundskeeper", "Willie", "L000087290", "PHY", 1.77, 2900.0, 1000.00);
+	student riviera("Riviera", "Nick", "L000000666", "NUC", 1.0, 9200.25, 1500.00);
+
+	// defaut parameter test
+	cout << endl << "Create temporary students with some default parameters "<<endl;	
+
+	student tempStudent1;										// bad major, bad id
+	student tempStudent2("Terwilliger", "Cecil", "L000012001");	// bad major, 
+	student tempStudent3("Spuckler", "Cletus", "L000000000", "", 2.21, 27.75, 0.05); //bad major
+	student dropOut("Gumble", "Barney");						// bad major, bad id
+
+// ----------------------------------------------------------------------
+//  Enter data for temp students
+
+	// test setters
+	cout << endl << "Testing setters" << endl;		
+	tempStudent1.setName("Hutz", "Lionel");			// valid
+	tempStudent1.setID("L000012345");				// valid		
+	tempStudent1.setMajor("RE");					// valid
+	tempStudent1.setGPA(2.99);						// valid
+	tempStudent1.setCharges(4523.25, 1000.00);		// valid
+
+	tempStudent2.setID("L000010045");				// valid
+	tempStudent2.setMajor("PSY");					// valid
+	tempStudent2.setGPA(3.99);						// valid
+	tempStudent2.setCharges(9523.25, 9000.00);		// valid
+
+	dropOut.setID("L000010005");					// valid
+	dropOut.setMajor("RE");							// valid
+	dropOut.setGPA(0.75);							// valid
+	dropOut.setCharges(1503.55, 1000.00);			// valid
+
+// ----------------------------------------------------------------------
+//  make some changes...
+
+	double	chg, aid, due;
+
+	bouvier.setName("McClure", bouvier.getFirstName() );
+
+	simpson.getCharges(chg, aid);						// valid
+	due = chg - aid;
+	if (due != simpson.getBalance())
+		cout << "Error, your computer will self-destruct...";
+
+	simpson.setCharges(0.0, 0.0);						// valid
+
+	if (groundskeeper.getGPA() < 2.5)					// valid
+		groundskeeper.setGPA(2.5);
+
+	if (tempStudent2.getMajor() == "Error")				
+		tempStudent2.setMajor("UND");
+
+// ----------------------------------------------------------------------
+//  Some error testing -> all of these should be errors...
+
+	cout << endl << "Test good and bad ids"<<endl;
+	// id errors
+	student frink("Frink", "John", "L000001001", "PHY", 3.75, 2000.0, 500.0);		// valid
+	frink.setID("L00012345");								// err
+	frink.setID("L000012A45");								// err
+	frink.setID("L000000042");								// valid
+
+	// id errors
+	student flandersR("Flanders", "Rod", "0000001254", "DAN", 2.25, 2300.50, 1000.0);	// err
+	flandersR.setID("L0002200022");								// err
+	flandersR.setID("L002200022");								// valid
+
+	student flandersT("Flanders", "Todd", "l000001254", "MUS", 3.15, 2500.0, 1000.0);	// err
+	flandersT.setID("M000110102");								// err
+	flandersT.setID("L000110102");								// valid
+
+	cout << endl<< "Test good and bad GPA "<<endl;
+	// gpa errors
+	student hoover("Hoover", "Elizabeth", "L0000010000");	// err bad id bad major
+	hoover.setMajor("EDU");									// valid
+	hoover.setCharges(1000.0, 1000.0);						// valid
+	hoover.setGPA(-2.65);									// err bad gpa
+	hoover.setGPA(7.65);									// err bad gpa
+	hoover.setGPA(4.01);									// err bad gpa
+	hoover.setGPA(2.01);									// valid
+
+	// major errors
+	cout << endl<<"Test good and bad majors"<<endl;
+	student flandersM("Flanders", "Maude", "L000001254", "ERR", 4.0, 930.50, 500.50);	// err
+	flandersM.setMajor("None");								// err
+	flandersM.setMajor("MIL");								// valid
+
+	// charges errors
+	cout << endl << "Test good and bad charges "<<endl;
+	student flandersN("Flanders", "Ned", "L000001000", "REG", 3.0, 99000.00, 100.00);	// err
+	flandersN.setCharges(-5001.0, 0.0);							// err
+	flandersN.setCharges(1000.0, 1001.00);							// err
+	flandersN.setCharges(1000.0, -100.00);							// err
+	flandersN.setCharges(1000.0, 100.00);							// good
+
+// ----------------------------------------------------------------------
+//  Do student Summary
+
+	cout << endl << "Show student summaries"<<endl;
+	simpson.showStudent();
+	leonard.showStudent();
+	carlson.showStudent();
+	bouvier.showStudent();
+	krabappel.showStudent();
+	neahasapeemapetilon.showStudent();
+	groundskeeper.showStudent();
+	riviera.showStudent();
+
+	tempStudent1.showStudent();
+	tempStudent2.showStudent();
+	tempStudent3.showStudent();
+	dropOut.showStudent();
+
+	frink.showStudent();
+	flandersN.showStudent();
+	flandersM.showStudent();
+	flandersR.showStudent();
+	flandersT.showStudent();
+	hoover.showStudent();
+
+	cout << endl;
+	return 0;
+}
+
+// ----------------------------------------------------------------------
+
