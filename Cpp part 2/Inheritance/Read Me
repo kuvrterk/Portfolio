@@ -1,0 +1,7 @@
+What this program does is having a class by the name of student, undergrad, and grad. Student class is the base class and undergrad is the
+derived class of student, and grad is the derived class of undergrad.
+Student -> undergrad -> Grad
+
+So the program would test some variables to make sure that the student functions is correctly working. Then print out basic information
+of students. Undergrad would expand that by inheritaing memebrs from the student class, but having two more unquie members, and the grad 
+class would inheritant student and undergrad members.
