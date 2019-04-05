@@ -1,0 +1,18 @@
+That This program does
+
+This program is simple when it comes down to what it actually does. What it does is taking in different dataypes from the main
+file (i.e. int, float, double, short, long, string, char) and depeneing on what the datatpye is it would perform some math. 
+For non-number datatype it would short them using the shell sort. 
+
+For number datatype it would find the smallest and largest number, while sorting it as well, then do some math. From finding the mean,
+average, sum, standard devi, and finally print the results. lastly it would have the user input a number for the length of what the array
+would be and perform the same operations.
+
+1. Making the class with the set datatype
+2. call the constructor 
+3. Call all the functions within the class
+4. print the results
+
+class w/ double -> call constructor -> call the math functions -> shell sort -> print the results -> call destructor
+class w/ char -> call constructor -> shell sort -> print the results -> call destructor
+
