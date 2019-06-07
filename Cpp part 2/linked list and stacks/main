@@ -1,0 +1,164 @@
+#include <iostream>
+#include <cstdlib>
+#include <iomanip>
+#include "stackType.h"
+
+
+using namespace std;
+
+int main()
+{
+    
+    string stars(40,'*');
+    // integer Stack Test
+        stackType<int> intStack;
+    
+    cout << endl << stars << endl;
+    cout << "Integer stack testing"<< endl;
+    
+    if( intStack.depth() != 0)
+        cout<< "Danger Will Robinson -illegal stack"<< endl;
+        
+    for (int i=0; i < 1000; i++)
+        intStack.push(i);
+        
+    cout << "intStack depth is "<< intStack.depth() << " should be 1000"<<endl;
+    
+    cout << "Printing first 3 elements of the stack"<<endl;
+    
+    intStack.printStack(3);
+    
+    
+    cout << "Initializing stack..." << endl;
+    intStack.initializeStack();
+    
+    cout << "intStack depth is "<< intStack.depth() << " should be zero"<<endl;
+    intStack.printStack(3);
+        intStack.push( 10 );
+    cout << "Push(10) "<< endl;
+    
+    intStack.push(25);
+    cout << "Push(25)"<<endl;
+    intStack.printStack(2);
+    
+    cout << "swap()"<<endl;
+    intStack.swap();
+    
+    intStack.printStack(2);
+    
+    cout << "drop top"<<endl;
+    intStack.drop();
+    
+    intStack.printStack(2);
+    
+    intStack.drop();    
+    intStack.drop();    
+    intStack.drop();    
+    intStack.drop();    
+    intStack.drop();    
+    intStack.drop();    
+    
+    
+//    String Stack Test
+    
+    cout << endl << stars << endl;
+    cout << "String Stack Testing"<< endl;
+    
+    
+    stackType<string> strStack;
+    char c='1';
+    string str("0");
+    
+    // test empty stack;
+    if( strStack.depth() != 0)
+        cout<< "Danger Will Robinson -illegal stack"<< endl;
+        
+        
+    for (char i=0; i < 10; i++){
+        
+        strStack.push(str);
+                str += c++;
+    }
+    cout << "string Stack depth is "<< strStack.depth() << " should be "<<10<<endl;
+    
+    strStack.printStack(strStack.depth());
+    
+    cout << "Printing last 3 elements of the stack"<<endl;
+    
+    
+    for (int i=strStack.depth(); i>strStack.depth()-4; i--){
+    
+        if (strStack.getNth(i, str) )
+            cout << str <<endl;
+    }
+    
+    // test copy constructor
+    cout << endl<<"Testing copy constructor"<<endl;
+    stackType<string> strStack2(strStack);
+    
+    cout << "Stack copy " << endl;
+    strStack2.printStack(strStack2.depth());
+    
+    cout << "Stack original " << endl;
+    strStack.printStack(strStack.depth());
+        
+    
+    cout << "Initializing stack..." << endl;
+    strStack.initializeStack();
+    
+    cout << "intStack depth is "<< intStack.depth() << " should be zero"<<endl;
+    strStack.printStack(3);
+    
+    
+    strStack.push( "Hello");
+    cout << "Push(Hello) "<< endl;
+    
+    strStack.push("There");
+    cout << "Push(There)"<<endl;
+    strStack.printStack(2);
+    
+    cout << "swap()"<<endl;
+    strStack.swap();
+    
+        strStack.printStack(2);
+    
+    cout << "drop top"<<endl;
+    strStack.drop();
+    
+    strStack.printStack(2);
+    
+    strStack.drop();    
+    strStack.drop();    
+    
+    //Stack Test Double
+    
+    cout << endl << stars << endl;
+    cout << "Double Stack Testing"<< endl;
+    
+    
+    cout << endl << endl<< "Testing double stack"<< endl;
+    stackType<double> dblStack;
+    
+    cout << fixed << showpoint;
+    cout << setprecision(3);
+    for(int i=0; i< 10000; i++){
+        dblStack.push( (rand()%10000)*1.101);
+    }
+     
+    cout << "Double stack depth is "<< dblStack.depth() << endl;
+    
+    dblStack.printStack(5);
+     
+     
+    cout << "Swap Test"<< endl; 
+    dblStack.swap( );
+    
+    
+    dblStack.printStack(5);
+    
+    cout << "Testing drop "<< endl;
+    dblStack.drop();
+     
+    dblStack.printStack(5); 
+}
+
