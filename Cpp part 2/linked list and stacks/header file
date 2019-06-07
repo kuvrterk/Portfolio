@@ -1,0 +1,265 @@
+#include <iostream>
+
+using namespace std;
+/*
+This is the main class for the stackType with the struct classfor the linkedlist
+*/
+template <class myType>
+struct nodeType
+{
+        myType info;
+        nodeType<myType> *next;
+};
+
+template <class myType>
+class stackType
+{
+     public:
+        stackType();                                    //Done
+        stackType(const stackType<myType>&);            //Done
+        ~stackType();                                   //Done
+        void initializeStack();                         //Done
+        bool isEmpty() const;                           //Done
+        myType pop();                                   //Done
+        void push(myType);                              //Done
+        void swap();                                    //Done
+        void drop();
+        bool getNth(int, myType&) const;                //Done
+        int depth() const;                              //Done
+        void printStack(int) const;                     //Done
+     private:
+        nodeType<myType> *top;
+};
+/*
+Description: This is the constrctor for the class, just setting top to nullptr
+Input: None
+Output:None
+*/
+template <class myType>
+stackType<myType>::stackType()
+{
+        top = nullptr;
+}
+/*
+Description: This is the copy constructor in which its copying the linked list for the first class
+with another class and creating a linked list for the stack
+Input: copying object
+Output:None
+*/
+template <class myType>
+stackType<myType>::stackType(const stackType<myType>& st)
+{
+        top = new nodeType<myType>;
+        nodeType<myType> *temp = st.top;
+        nodeType<myType> *current = top;
+
+        while(temp != nullptr)
+        {
+                current->info = temp->info;
+                current->next = new nodeType<myType>;
+                current = current->next;
+                temp = temp->next;
+        }
+
+}
+/*
+Description: This is the de0strctor for the class removing all memory.
+Input: None
+Output:None
+*/
+template <class myType>
+stackType<myType>::~stackType()
+{
+        nodeType<myType> *temp;
+        
+        while(top != nullptr)
+        {
+                temp = top;
+                top = top->next;
+                delete temp;
+        }
+        
+        delete top;
+        top = nullptr;
+        temp = nullptr;
+}
+/*
+Description: Checking to see if the stack is empty and if not then deleting the old one
+Input: None
+Output:None
+*/
+template <class myType>
+void stackType<myType>::initializeStack()
+{
+        if(!(isEmpty()))
+        {
+                //delete the stack and link list and set top to nullptr
+                nodeType<myType> *temp = top;
+
+                while(temp != nullptr)
+                {
+                        delete temp;
+                        temp = temp->next;                              
+                }
+                top = nullptr;
+                temp = nullptr;
+        }
+}
+/*
+Description: Checking to see if the stack is empty
+Input: None
+Output:None
+*/
+template <class myType>
+bool stackType<myType>::isEmpty() const
+{
+        if(top != nullptr)
+                return false;
+        else
+                return true;
+}
+/*
+Description: pushing the value into a new link list and linking it 
+Input: myType value
+Output:None
+*/
+template <class myType>
+void stackType<myType>::push(myType newValue)
+{
+        if(top == nullptr)
+        {
+                top = new nodeType<myType>;
+                               top->info = newValue;
+                top->next = nullptr;
+        }
+        else
+        {
+                nodeType<myType> *temp = new nodeType<myType>;          //[info|nullptr] [|]            
+                temp->info = newValue;                  //[info|nullptr] [info|]
+                temp->next = top;                       //[info|nullptr]<--[info|top]
+                top = temp;                             //[info|nullptr] [info|<--] -> top/temp
+        }
+}
+/*
+Description: Checking to see if there isn't a second linke list and then swaping the top two
+Input: None
+Output:None
+*/
+template <class myType>
+void stackType<myType>::swap()
+{
+        if(top->next == nullptr)
+        {
+                cout << "Error, can't swap since there is only one stack" << endl;
+        }
+        else
+        {
+                myType swapValue = top->info;
+                top->info = top->next->info;
+                top->next->info = swapValue;
+        }
+
+}
+/*
+Description: deleting the top linke list (top of the stack)
+Input: None
+Output:None
+*/
+template <class myType>
+void stackType<myType>::drop()
+{
+        if(top != nullptr)
+        {
+                nodeType<myType> *temp = top->next;
+                delete top;
+                               top = temp;
+        }
+        else
+                cout << "Error, can't drop the top stack" << endl;
+
+}
+/*
+Description: Deleting the first link list on the stack and returning the value in it
+Input: None
+Output: myType info
+*/
+template <class myType>
+myType stackType<myType>::pop()
+{
+        myType tempValue;
+        if(top != nullptr)
+        {
+                tempValue = top->info;          //[info|next] --> value = info
+                delete top;
+                top = top->next;                //[info|next]--.
+        }
+        else
+                cout << "Error, the stack is empty" << endl;
+
+        return tempValue;
+}
+/*
+Description: Getting the nth value and or checking to see if the linklist exits int that value
+Input: int value and myType
+Output:true/false
+*/
+template <class myType>
+bool stackType<myType>::getNth(int value, myType& newValue) const
+{
+        nodeType<myType> *temp = top;
+        int counter = 0;
+
+        while(temp != nullptr)
+        {
+                if(value == counter)
+                {
+                        newValue = temp->info;
+                        return true;
+                }
+                               counter++;
+                temp = temp->next;
+        }
+
+        return false;
+}
+/*
+Description: Checking the length of the linked list
+Input: None
+Output:depth of the linked list
+*/
+template <class myType>
+int stackType<myType>::depth() const
+{
+        int counter = 0;
+        nodeType<myType> *temp = top;
+
+        while(temp != nullptr)
+        {
+                counter++;
+                temp = temp->next;
+        }
+
+        return counter;
+}
+/*
+Description: printing the linked list towards the value in the parameter
+Input: int value
+Output:none
+*/
+template <class myType>
+void stackType<myType>::printStack(int value) const
+{
+        int counter = 0;
+        nodeType<myType> *temp = top;
+
+        while(temp != nullptr)
+        {
+                if(counter == value)
+                        break;
+        
+                cout << temp->info << " ";
+                counter++;
+                temp = temp->next;
+                 }
+        cout << endl;   
+}
